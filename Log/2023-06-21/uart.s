@@ -12,6 +12,9 @@
 	.eqv TX_RDY 1   #-- Bit de transmisor listo
 	.eqv RX_RDY 1   #-- Bit de receptor listo
 	
+	#-- Sistema operativo
+	.eqv SLEEP 32
+	
 	.text
 
 #----------------------------------------------
@@ -172,6 +175,18 @@ UART_car_waiting:
 	
 	#-- Aislar el bit de ready
 	andi a0,a0,RX_RDY
+	
+	#--- ESTO SE PONE SOLO CON EL RARS
+	mv t0,a0
+	#-- Hacer pausa para que la cpu 
+	#-- no trabaje tanto y sea facil terminar
+	li a0, 5
+	li a7, SLEEP 
+	ecall
+	mv a0,t0
+	#--- FIN DEL HACK PARA RARS
+	
+	
 	ret
 	
 	
