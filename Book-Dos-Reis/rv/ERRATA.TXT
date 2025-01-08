@@ -1,0 +1,106 @@
+                         Errata             May 11, 2021
+
+New rv version (3.4): 
+
+      - fixed bug affecting strings with embedded left 
+        parenthesis, +, or -.
+      - fixed bug affecting din, hin, and ain which caused 
+        infinite loop if an invalid input is entered.
+
+
+Page 13
+
+Delete the first "in" in step 4.
+
+
+Page 31 
+
+Clarification of the operation of the auipc instruction:
+
+   Modify middle paragraph:
+
+      ... it also adds the address in the pc register (the 
+      address at the time the auipc instruction is fetched) to 
+      the register specified by the rd field. That is, it adds 
+      the address in the pc register before the pc register is 
+      incremented by 4. 
+
+   Modify next paragraph:
+
+      ...then the pc register will contain 0 when the auipc 
+      instruction in r0206.bin is fetched. 
+      ... load point is 4, the pc register will contain 4 when the 
+      auipc instruction is fetched.
+  
+
+Page 42
+
+The ASCII for 'B' should be 01000010, not 00100010
+
+
+Page 58
+
+The r0308.a program displays "Goodbye", not "Bye".
+
+
+Page 60 
+
+Page 60 states that to divide a signed number by 2, use the 
+arithmetic right shift instructions, sra and srai. However, the 
+arithmetic right shift instructions do NOT give the correct 
+answer if the number divided is negative and odd. For example, if 
+-7 (1...1001 in binary) is right shifted arithmetically one 
+position, its value becomes 1...100 = -4.  But -7/2 is equal to 
+-3 with a remainder equal to -1. If, however, the number divided 
+is even or non-negative, then a right arithmetic shift one 
+position does give the correct answer. For example, -8 (1...1000 
+in binary) is arithmetically shifted right one position, its 
+value becomes 1...100 = -4. 
+
+However, the division by 2 performed by the right arithmetic 
+shift instructions is consistent with an alternate definition of 
+division (favored by some algebraists) that requires the 
+remainder be non-negative. With this alternate definition, -7/2 = 
+-4 with a remainder = +1. But this definition is not the operative 
+definition of division in the computer world. To confirm this, 
+compile and run the following C program: 
+
+#include <stdio.h>
+int main()
+{
+   printf("%d %d\n", (-7)/2, (-7)%2);
+   return 0;
+}
+
+
+Page 77
+
+The A header entry should be "A  0000000c", not "A  000c".
+
+
+Page 86
+
+The second la instruction on this page should be an lw instruction.
+
+
+Page 143
+
+The immediate field in the J-type instruction should have the 
+following format: imm[20|10:1|11|19:12]
+
+The directive .test should be .text
+
+
+Page 144
+
+   Extraneous right bracket in rs2 field for bltu.
+   "rd" in din, hin, and ain instructions should be in rd field (bit
+   positions 7 to 11).
+
+
+Page 145
+
+The link to the online MIT course on RISC-V is no longer valid.
+However, the course videos are available on youtube. In youtube,
+search for"mit risc-v".
+ 

@@ -1,0 +1,26 @@
+# Start-up code that configures argc and argv and calls main
+          .extern main     # needed to link to main
+_start:   li t3, 0xc000    # t3 points to command line
+          la t4, array     # t4 point to argv array
+          li a0, 0         # a0 is argc counter
+          li t1, ' '       # used to determine if at end of arg
+
+getarg:   sw t3, 0(t4)     # store arg addr in array
+          addi t4, t4, 4   # inc pointer to array
+          addi a0, a0, 1   # increment argc counter
+
+nextchar: addi t3, t3, 1       # move com line pointer
+          lbu t0, 0(t3)        # get char from com line
+          beq t0, x0, callmain # is it the null char
+          bne t0, t1, nextchar # compare char and blank
+
+          sb x0, 0(t3)     # overlay blank with null char
+          addi t3, t3, 1   # advance ptr to next arg
+          jal x0, getarg
+
+callmain: lw a1, argv      # call main passing argc (a0), argv (a1)
+          jal ra, main     # program must have main function
+
+alldone:  halt
+argv:     .word array      # address of argv array
+array:    .zero 100        # 25-word argv array

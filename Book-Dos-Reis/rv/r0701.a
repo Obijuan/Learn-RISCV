@@ -1,0 +1,55 @@
+                                  # #include <stdio.h>
+                                  # void f(int z);
+x:        .word 1                 # int x = 1;
+main:     .global main            # int main()
+          addi sp, sp -4          # {
+          sw ra, 0(sp)
+
+          lw a0, x                #    f(x);
+          jal ra, f
+
+          lw a0, x                #    f(x+10);
+          addi a0, a0, 10
+          jal ra, f
+
+          lw ra, 0(sp)            #    return 0;
+          add sp, sp, 4
+          li a0, 0
+          jalr x0, 0(ra)          # }
+#========================================================
+f:        .global f               # void f(int z)
+          addi sp, sp, -4         # {
+          sw s0, 0(sp)
+
+          li s0, 2                #    int a = 2;
+                                  #    static int b = 3;
+          dout a0                 #    printf("%d\n", z);
+          nl
+
+          dout s0                 #    printf("%d\n", a);
+          nl
+
+          lw t0, @1b              #    printf("%d\n", b);
+          dout t0
+          nl
+
+          lw t0, x                #    printf("%d\n", x);
+          dout t0
+          nl
+
+          add s0, s0, 1           #    a++;
+
+          lw  t0, @1b             #    b++;
+          addi t0, t0, 1
+          sw t0, @1b
+
+          lw t0, x                #    x++;
+          addi t0, t0, 1
+          sw t0, x
+
+          lw s0, 0(sp)            # }
+          addi sp, sp, 4
+          jalr x0, 0(ra)
+
+@1b:      .word 3
+

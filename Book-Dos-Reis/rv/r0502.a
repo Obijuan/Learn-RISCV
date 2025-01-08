@@ -1,0 +1,7 @@
+          lw t0, x       # load t0 with low-order word
+          lw t1, x+4     # load t1 with high-order word
+          dhout t0       # display doubleword in t0-t1 in hex
+          nl             # move cursor to next line
+          ddout t0       # display doubleword in t0-t1 in decimal
+          halt
+x:       .dword 0x7fffffffffffffff

@@ -1,0 +1,42 @@
+                                 #  #include <stdio.h>
+fact:      .global fact          # int fact(int n)
+           addi sp, sp, -8       # {
+           sw ra, 4(sp)
+           sw a0, 0(sp)
+           slti t0, a0, 2        #    if (n < 2)
+           beq t0, x0, recurse
+
+           li a0, 1
+           addi sp, sp, 8
+           jalr x0, 0(ra)        #       return 1;
+
+recurse:   addi a0, a0, -1       #    return n*fact(n-1);
+           jal ra, fact  
+           mv t0, a0   
+           lw a0, 0(sp)
+           mul a0, a0, t0
+
+           lw ra, 4(sp)
+           addi sp, sp, 8
+           jalr x0, 0(ra)
+                                 # }
+#========================================================
+main:     .global main           # int main()
+           addi sp, sp, -8        # {
+           sw ra, 4(sp)
+           sw s0, 0(sp)
+                                 #    int answer;
+           li a0, 3
+           jal ra, fact
+          
+           mv s0, a0             #    answer = fact(5);
+
+           dout s0               #    printf("%d\n", answer);
+           nl
+
+           li a0, 0              #    return 0;
+           lw s0, 0(sp)
+           lw ra, 4(sp)
+           add sp, sp, 8
+           jalr x0, 0(ra)
+                                # }

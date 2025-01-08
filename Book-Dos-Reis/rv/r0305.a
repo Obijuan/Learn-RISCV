@@ -1,0 +1,32 @@
+# This program reads in a positive integer n and computers its 
+# square by adding the first n positive odd integers
+# t0 current odd number
+# t1 accumulator that accumulates the sum
+# t2 n (the number to be squared
+# t3 loop counter
+
+          addi t0, x0, 1     # init current odd number to 1
+          addi t1, x0, 0     # init accumulator to 0
+          lw t4, aprompt     # get address of prompt message
+          sout t4            # prompt user for n
+          din t2             # input n
+          addi t3, t2, 0     # initialize loop ctr with n
+
+loop:     add  t1, t1, t0    # add current odd number in t0 to t1
+          addi t0, t0, 2     # increase t0 to next odd number
+          addi t3, t3, -1    # decrement loop counter in t3
+          bne t3, x0, loop   # branch if loop counter not 0
+
+          lw t4, amsg1       # get address of msg1
+          sout t4            # output "Square of "
+          dout t2            # output n
+          lw t4, amsg2       # get address of msg2
+          sout t4            # output " = "
+          dout t1            # output the square
+          halt
+aprompt:  .word prompt
+prompt:   .asciz "Enter positive integer: "
+amsg1:    .word msg1
+msg1:     .asciz "Square of "
+amsg2:    .word msg2
+msg2:     .asciz " = "

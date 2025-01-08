@@ -1,0 +1,8 @@
+sub:      lw t0, amsg      # execution should not start here!
+          sout t0          
+          jalr x0, 0(ra)   # returns to lw instruction
+msg:      .asciz "Hi"
+amsg:     .word msg
+#============================================================
+caller:   jal ra, sub      # saves return address in ra
+          halt

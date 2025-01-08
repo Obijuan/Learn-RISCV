@@ -1,0 +1,54 @@
+                             # #include <stdio.h>
+z:        .word 13           # int z = 13;
+add1:     .global add1       # void add1(int *p, int a)
+                             # {
+          lw t0, 0(a0)       #    *p = *p + 1;
+          addi t0, t0, 1
+          sw t0, 0(a0)
+
+          addi a1, a1, 1     #    a = a + 1;
+
+          lw t0, z           #    z = z + 1;
+          addi t0, t0, 1
+          sw t0, z
+
+          jalr x0, 0(ra)     # }
+# ==============================================================
+main:     .global main       # int main()
+          addi sp, sp, -12    # {
+          sw ra, 8(sp)
+          sw s0, 4(sp)
+
+          li t0, 7           #    int x = 7, y = 11;
+          sw t0, 0(sp)
+          li s0, 11
+
+          lw t0, 0(sp)       #    printf("%d %d %d\n", x, y, z);
+          dout t0
+          li t0, ' '
+          aout t0
+          dout s0
+          aout t0
+          lw t0, z
+          dout t0
+          nl
+
+          mv a0, sp          #    add1(&x, y);
+          mv a1, s0
+          jal ra, add1
+
+          lw t0, 0(sp)       #    printf("%d %d %d\n", x, y, z);
+          dout t0
+          li t0, ' '
+          aout t0
+          dout s0
+          aout t0
+          lw t0, z
+          dout t0
+          nl
+
+          li a0, 0           #    return 0;
+          lw s0, 4(sp)
+          lw ra, 8(sp)
+          add sp, sp, 12
+          jalr x0, 0(ra)     # }

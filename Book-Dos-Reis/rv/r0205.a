@@ -1,0 +1,4 @@
+          lui t0, 0x12345
+          addi t0, t0, 0x678
+          hout t0
+          halt

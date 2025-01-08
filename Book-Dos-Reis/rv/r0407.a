@@ -1,0 +1,10 @@
+s:      lw  t0, amsg       # get address of msg
+        sout t0            # prompt user
+        din t0             # read in a negative or non-negative number
+xxx:    blt t0, x0, *+12   # branch on negative to hout instruction
+        dout t0            # display non-negative number in decimal
+yyy:    beq x0, x0, *+8    # unconditional branch to halt instruction
+x:      hout t0            # display negative number in hex
+y:      halt
+amsg:   .word msg
+msg:    .asciz "Enter decimal number\n"

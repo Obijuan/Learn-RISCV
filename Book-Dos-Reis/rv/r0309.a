@@ -1,0 +1,17 @@
+          lw t0, aprompt  # load address of prompt message
+          sout t0         # display prompt message
+          din a0          # input number to multiply
+          jal ra, multby3 # call subroutne
+          lw t0, amsg     # get address of label
+          sout t0         # label answer                                     
+          dout a0         # display answer
+          halt
+prompt:  .asciz "Enter decimal number\n"
+aprompt: .word prompt
+msg:     .asciz "product = "
+amsg:    .word msg
+#=====================================================
+multby3:  addi t0, a0, 0  # move a0 to t0        
+          slli a0, a0, 1  # multiply number by 2
+          add a0, a0, t0  # add the original number
+          jalr x0, ra     # return to the caller with answer in a0

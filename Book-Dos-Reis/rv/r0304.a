@@ -1,0 +1,11 @@
+          lw t0, aprompt    # load t0 with address of prompt message
+          sout t0           # prompt user to enter character
+          ain t0            # input a character
+          aout t0           # echo the character
+          nl                # move cursor to next line
+          dout t0           # output code for character in decimal
+          nl                # move cursor to next line
+          hout t0           # output code for character in hex
+          halt
+prompt:  .asciz "Enter character: "
+aprompt: .word prompt

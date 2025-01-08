@@ -1,0 +1,26 @@
+_start:   jal ra, sub1		# call sub1
+          halt
+#========================
+sub1:     add sp, sp, -4           # push return address onto stack
+          sw ra, 0(sp) 		
+          
+          jal ra, sub2		# call sub2
+
+          lw t0, amsg1
+          sout t0
+
+          lw ra, 0(sp)		             # pop saved return address into ra
+          add sp, sp, 4
+          jalr x0, 0(ra)           		# return to caller
+
+amsg1:    .word msg1
+msg1:     .asciz "Goodbye\n"
+#========================
+sub2:     lw t0, amsg2
+          sout t0   		               # No need to push return address
+
+          jalr x0, 0(ra)	           	# return to caller
+
+amsg2:    .word msg2
+msg2:     .asciz "Hello\n"
+

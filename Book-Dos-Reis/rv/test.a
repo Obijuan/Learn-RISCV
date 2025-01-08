@@ -1,0 +1,5 @@
+           lw t0, as         # load address of string into t0
+           sout t0           # display string whose address is in t0
+           halt
+s:         .asciz "hello\n"
+as:        .word s           # address of string

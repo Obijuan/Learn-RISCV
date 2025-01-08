@@ -1,0 +1,18 @@
+           .extern i
+           .extern j
+           .global sub
+
+sub:       lw t0, i
+           lw t1, x
+           lw t1, 0(t1)
+           add t0, t0, t1
+           lw t1, y
+           lw t1, 0(t1)
+           add t0, t0, t1
+           dout t0
+           nl
+
+           ret
+x:         .word j
+y:         .word k
+k:         .word 11

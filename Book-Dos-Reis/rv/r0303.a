@@ -1,0 +1,10 @@
+          lw t0, aprompt   # load t0 with address of prompt message
+          sout t0          # prompt user for string  
+          lw t0, abuf      # load t0 with the address of the buffer
+          sin t0           # input string into buffer
+          sout t0          # echo string to the display
+          halt            
+aprompt:  .word prompt     # address of prompt string
+prompt:   .asciz "Enter string\n"
+abuf:     .word buf        # address of the input buffer
+buf:      .zero 100        # 100-byte input buffer

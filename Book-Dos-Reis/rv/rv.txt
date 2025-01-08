@@ -1,0 +1,830 @@
+           RV Assembler/Linker/Debugger/Interpreter
+                      Version 3.4
+         Copyright (c) 2019 by Anthony J. Dos Reis
+
+
+DISCLAIMER
+----------
+
+The files in this software package are provided to you on an "as
+is" basis for instructional purposes only, without any
+warranties, expressed or implied. The author and the copyright
+holder of these files shall not be liable in any event for
+incidental, consequential, special, or punitive damages in
+connection with, or arising out of the distribution, performance,
+or use of these files.
+
+
+Version 3.4
+-----------
+
+Fixed problem with string constants in .fill directives that contain
+"(", "+", or "-". Also fixed problem with din, hin, and ain (if invalid
+input is entered).
+
+
+Version 3.3
+-----------
+
+Fixed .equ bug which caused incorrect header entries.
+
+
+Which rv file to use
+---------------------
+
+   Windows:      rv.exe or rvwin.exe (rv.exe and rvwin.exe are
+                 identical)
+
+   Mac:          rv or rvmac (rv and rvmac are identical)
+
+   Linux:        rvlnx
+
+   Raspbian:     rvrasp
+
+
+Installation of sofware package
+-------------------------------
+
+After downloading rv.zip (the software package), unzip it to a
+directory named "rv" on your Desktop. The directory does not have
+to be named "rv" nor does it have to be on the Desktop. However,
+the directions below on running the rv program assume the
+software package directory is named "rv" and is on the Desktop.
+If it is not, then make the necessary modifications in the
+directions below.
+
+On a Mac OS X, Linux, or Raspbian system, position computer on
+your rv directory when running the Terminal program. Then enter
+
+   chmod 755 *
+
+to give executable permissions to your executable files.
+
+
+Running the rv program
+----------------------
+
+Start the command line program. To do this,
+
+   on Windows, start the "Command Prompt" program
+
+   on Mac, Linux, or Raspbian, start the "Terminal" program.
+
+Your computer should then be positioned just above the Desktop
+directory. Change to the Desktop directory by entering
+
+   cd Desktop                   (be sure to capitalize the D)
+
+Then change to the rv directory which should be just below the
+Desktop directory by entering
+
+   cd rv
+
+If you are using Linux or Raspbian, and want to use the name
+"rv" (rather than rvlnx or rvrasp) to invoke the rv program,
+copy the executable file to "rv" by entering on the command line
+
+   cp rvlnx rv     (on Linux)
+   cp rvrasp rv    (on Raspbian)
+
+Suppose you want to run the rv program on the input file named
+"test.a". Then enter on the command line
+
+   ./rv test.a         (on Mac, Linux, or Raspbian)
+
+   rv test.a           (on Windows)
+
+If you do not want to prefix "rv" with "./" when invoking rv on
+Mac OS X, Linux, and Raspbian, you have to make a modification to the
+PATH environment variable. For directions on how to do this, see
+the last section in this file or see the file readme.txt.
+
+When you invoke the rv program, it expects an input file. If an
+input file is not specified, rv immediately terminates. That is
+the reason why rv immediately terminates if you invoke it by
+double clicking on it with your mouse. Clicking on the rv file
+invokes it but does not provide an input file. Thus, rv
+terminates immediately.
+
+
+RISC-V Model Supported
+----------------------
+
+Supported:
+
+   RV32I base instruction set except for fence, fence.i, ecall,
+   and ebreak.
+
+   RV32M standard extension (multiply, division, and remainder
+   instructions)
+
+Only 64K bytes of memory are simulated. On entry to the
+interpreted program, all registers except for pc, sp, and gp are
+zero. pc is set to the entry point. sp is set to 0x10000 (so the
+first push operation is stored into 0xfffc--the top of the 64K
+simulated memory). gp is set to the load point if there is no
+.data/.rodata/.bss section (gp is used as the base register for
+the load and store instructions), or the middle of the
+.data/.rodata/.bss section if there is one. .rodata and .bss is
+treated like .data. Alignments are all fullword. .align and
+.balign directives are ignored.
+
+Pseudo-instructions supported:
+
+   li, la, mv, neg, nop, not,
+   j, jr, jal (ra assumed), jalr (ra assumed), ret,
+   beqz, bnez, bgt, bgtu, bgtz, bgez, ble, bleu, bltz,  blez,
+   seqz, snez, sltz, sgtz
+
+   li generates either an addi instruction or a lui-addi sequence
+   depending of the size of the immediate value. Thus, it can
+   load any 32-bit value.
+
+   la generates an auipc-addi sequence.
+
+Directives supported:
+
+   .global, .globl, .equ, .word, .dword, .asciz, .ascii, .start,
+   .string, .zero, .space, .extern, .text, .data, .bss, .rodata
+
+   .byte and .half are NOT supported. .align and .balign is
+   ignored (all boundaries are fullword).
+
+   .global, .globl, .extern, asciz, and azcii take only one operand.
+   .word and .dword can take multiple operands
+
+   A .dword operand must be a single constant (no labels or
+   string constants).
+
+   .word operands can be in any of the following forms:
+
+      constant (except string constants)
+      label
+      label+constant
+      label-constant
+      constant(label)
+
+   Only one .text section is supported and it cannot be in multiple
+   parts.
+
+   Only one .data/.rodata/.bss section is supported and it cannot
+   be in multiple parts.
+
+   .data, .rodata, .bss, and .text sections are read and write.
+
+   If a .data/.rodata/.bss section is specified, the gp register
+   is initialized to the address of the middle of the section.
+   Otherwise, the gp register is initialized to the load point.
+
+   The only restriction on the placement of a .equ directive is
+   that it must precede any li instruction, .space, or .zero
+   directive that uses the equated name.
+
+
+Register initialization
+
+   sp register is initialized to 10000 hex.
+
+   gp register is initialized to the load point (if no
+   .data/.rodata/.bss section) or the middle of the
+   .data/.rodata/.bss section.
+
+   pc register is initialized to the entry point.
+
+
+Context-sensitive mnemonics
+
+   The add mnemonic is translated to an add instruction if the
+   third operand is a register. Otherwise, it is translated to an
+   addi instructon. The slt, sltu, xor, or, and, sll, srl, sra
+   mnemonics are similarly translated to the corresponding
+   instruction or the corresponding immediate instruction,
+   depending on the third operand.
+
+
+Limitations and extensions:
+
+   A .dword directive can take only numeric operands (i.e., no
+   labels).
+
+   A module with a .data/.rodata/.bss section cannot be linked
+   with other modules.
+
+   Only one .text section is supported and it cannot be in
+   multiple parts.
+
+   Only one .data/.rodata/.bss section is supported and it cannot
+   be in multiple parts.
+
+   Alignment directives are ignored. All alignments are fullword.
+
+   .word, .asciz, .ascii, and .string entries are aligned on
+   fullword boundaries.
+
+   The byte and halfword instructions are supported but not the
+   .byte and .half directives.
+
+   Wherever you can use a label followed by an offset, you can
+   use instead the offset followed by the label within
+   parentheses, or the label +/- the offset. For example,
+
+      jal ra, sub, -4
+      jal ra, -4(sub)
+      jal ra, sub-4
+
+      beq t0, t1, xxx, 4
+      beq t0, t1, 4(xxx)
+      beq t0, t1, xxx+4
+
+      lw t0, yyy, -4
+      lw t0, -4(yyy)
+      lw t0, yyy-4
+
+   Wherever you can use a register followed by an offset, you can
+   use instead the offset followed by the label within
+   parentheses. For example
+
+       jalr x0, t0, 4
+       jalr x0, 4(t0)
+
+       lw t0, sp, -4
+       lw t0, -4(sp)
+
+   The parenthesized and +/- forms can be used within a .word
+   directive. For example,
+
+      x:    .word y, 3, y+4, y-4, -4(z)
+
+   An entry point can be specified with either the .start
+   directive or with the label _start.
+
+   Operands for the load and store instructions can be on any
+   boundary. Instructions, however, must be on fullword
+   boundaries.
+
+   %hi and &lo operators are supported.
+
+   If ~ precedes a constant, the bits in the constant are
+   flipped.
+
+   Memory is limited to 64K bytes.
+
+
+Linking
+-------
+
+An assembly language file that has any .global or .extern
+directives is assumed to be a module that must be linked. For
+such a module, rv outputs an object file (with extension ".o")
+rather than an executable file (with extension ".e").
+
+A module with a .data/.rodata/.bss directive cannot be linked.
+
+To create an executable file from multiple object files that make
+up a program, enter the names of the object files (include the
+".o" extension) on the command line when invoking rv. For
+example, to create an executable file from the assembly language
+files m1.a and m2.a, first assemble them by entering
+
+   rv m1.a                 (creates m1.o)
+   rv m2.a                 (creates m2.o)
+
+Then link the object modules by entering
+
+   rv m1.o m2.o  (creates executable file link.e)
+
+Then execute link.e by entering
+
+   rv link.e
+
+
+Entering your name
+------------------
+
+The first time the rv program is run, it prompts for your name.
+Enter your name. Your name will then appear in the .lst and .bst
+files that rv creates. If you want to change your name as it
+appears in the .lst and .bst files, edit the file name.nnn.
+
+
+Command Line Arguments
+----------------------
+
+When rv is invoked and the input file is not an ".o" object
+module, the following optional arguments can be specified, in any
+order:
+
+   -d debugger on, instruction trace on, step count set to 1
+   -f full .lst files (no truncation of lines to fit page)
+   -h or -? help screen
+   -l<load point> (defaults to hex, prefix number with # for decimal)
+   -m memory dump at the end of run
+   -o<outputfilename>
+   -s symbol table dump at the end of a run
+   -x register dump at the end of run
+   -t instruction trace on
+
+If an output file name is not specified with the -o argument,
+then the output file name defaults to the same name as the input
+file name but with a different extension.
+
+For a link, if an output file name is not specified with the -o
+command line argument, it defaults to link.e.
+
+If command line arguments that do not start with '-' or '/' are
+specified in addition of the input file name, these command line
+arguments are provided to the program that is executed at the
+address 0xc000 in the simulated memory.
+
+
+Header
+------
+
+The rv program supports programmer-specified entry points (with
+the .start directive or the _start label), load point
+specification (with the -L command line argument), and linking.
+Machine code files (files with the ".e" or ".o" extension) start
+with a header which contains fields of information that permit
+linking of separately-assembled modules. Specifically the header
+contains the following entries, depending of the specifics of the
+assembly language program:
+
+   R entry
+        'R' (signature or rv-created object and executable files)
+
+   T entry
+        'T'
+        Address of the start of the .text section (i.e.,
+        instructions)
+   D entry
+        'D'
+        Address of the middle of the .data section
+   A entry
+        'A'
+        Address in module of a 32-bit local address
+
+   L entry
+        'L'
+        Address in module of a local relocatable address in a
+        load or store instruction.
+
+   E entry
+        'E'
+         Address in module of an external reference.
+         External label as a null-terminated string
+
+   G entry
+        'G'
+        Address in module of global label
+        Global label as a null-terminated string
+
+   S entry
+        'S'
+        Address in module of the entry point
+
+   V entry
+        'V'
+        Address in module of 32-bit external reference
+
+   C entry
+        'C'
+        Marks end of the header and the beginning of the machine code
+
+
+Assembler directives that support linking (they can appear
+anywhere in the source file):
+
+   .global <label>             (or .globl <label>)
+        Makes the specified label within the module visible to other
+        modules.
+
+   .extern <label>
+        Indicates that the specified label is an external label.
+
+   .start  <label>
+        Indicates that the specified label is the entry point for
+        the linked program. Can also use the label _start.
+
+For example, the object module file corresponding to
+
+        .global a
+        .global b
+        .extern sub
+        .extern x
+        .start s
+   s:   jal ra, sub
+        lw  s0, x
+        dout s0
+        lw  s1, b
+        dout s1
+        halt
+   a:   .word b
+   b:   .word 100
+   c:   .word x
+
+contains the following header:
+
+R                (signature for rv-created object/executable files)
+T 00000000       (address of start of .text section)
+S 00000000       (indicates entry point of the module)
+E 00000000 sub   (indicates external ref to sub at location 0000)
+E 00000004 x     (indicates external ref to x at location 4)
+L 0000000c       (indicates load or store at 0xc with local label)
+G 00000018 a     (indicates a is global, and its location is 0x18)
+A 00000018       (indicates 32-bit local address is at location 0x18)
+G 0000001c b     (indicates b is global, and its location is 0x1c)
+V 00000020 x     (indicates 32-bit external ref to x at location 0x20)
+D 0000001c       (address of middle of .data section)
+C
+
+
+Input files
+-----------
+
+Four types of input files--corresponding to four forms of an
+rv program--are handled by rv:
+
+   1) ASCII hex text file (must have ".hex" extension).
+      Executable programs created from ".hex" files are not
+      relocatable. That is, they will not work correctly if the
+      load point is nonzero and they contain any absolute
+      addresses (relative addresses, however, are okay).
+
+   2) ASCII binary text file (must have ".bin" extension)
+      Executable programs created from ".bin" files are not
+      relocatable. That is, they will not work correctly if the
+      load point is nonzero and they contain any absolute
+      addresses (relative addresses, however, are okay).
+
+   3) assembler code file (any file except those with
+      ".hex", ".bin", ".e" , or ".o" extensions)
+
+   4) machine code (must have the ".e", or ".o" extension).
+
+For files types 1, 2, and 3, a one-line comment starts with a #.
+
+If the input files are object modules (i.e., their names have an
+".o" extension), the rv program links them and outputs an
+executable file with the extension ".e". The default name for the
+executable file produced by the linker is link.e.
+
+
+Output files
+------------
+
+Three files are created with the following extensions when rv
+performs an assembly and an interpretation:
+
+   1) .e    binary code in little endian format if the input file
+            is a complete program, or
+
+      .o    binary code in endian format if the input file is not
+            a complete program
+
+   2) .lst  time stamp, student's name, hex and source listing,
+            and the output from the run.
+
+   3) .bst  time stamp, student's name, binary and source
+            listing, and the output from the run.
+
+When rv performs an interpretion only (i.e., the input file has
+the extension ".e"), it outputs a ".lst" and a ".bst" file.
+
+When rv performs a link, it outputs an ".e" executable file.
+
+
+Labels
+------
+
+A label is a string that starts with a letter, '_', '$', or '@',
+and is followed by zero or more occurrences of letters, '_', '$',
+'@', and digits.
+
+A label at the beginning of a a line does not have to start in
+column 1, but it must be terminated with a colon.
+
+Labels are case sensitive.
+
+A label cannot be the name of a register.
+
+A label can be on an otherwise blank line. Such a label is
+treated as the label on the next line for which code is
+generated. For example, the following is legal (all three labels
+correspond to the lw instruction):
+
+   L1:
+   L2:
+   L3:       lw   t0, x
+
+An asterisk can occupy the position within an instruction or
+directive normally occupied with a label. Such an asterisk means
+the current address (i.e., the address of the location in which
+it appears).
+
+
+Constants in assembly language programs
+---------------------------------------
+
+A constant starting with a decimal digit but not "0x" or "0b" is
+a decimal constant.
+
+A constant starting with "0x" (upper or lower case) is a hex
+constant.
+
+A constant starting with "0b" (upper or lower case) is a binary
+constant.
+
+A hex constant with fewer than 8 digits is zero extended to 8
+digits.
+
+A binary constant with fewer than 32 bits is zero extended
+to 32 bits.
+
+A constant starting with a single quote, is a character constant.
+The constants 1 and '1' have different representations:
+
+    1:  0000000000000001    (binary for 1)
+   '1': 0000000000110001    (ASCII for '1')
+
+Embedded spaces are not allowed in constants in an assembly
+language program.
+
+Embedded spaces are allowed in a ".bin" file.
+
+A plus, minus, or ~ sign can precede a constant.
+
+
+Register aliases
+----------------
+
+The standard RISC-V register aliases can be used. For example, gp can
+be used in place of x3.
+
+
+Halt and I/O Instructions
+-------------------------
+
+The rv program supports the following non-RISC-V instructions:
+
+                                                            funct7
+
+   halt        halt                                             0
+   nl          output newline to display                        1
+   dout  reg   output reg in decimal to display                 2
+   udout reg   output reg in unsigned decimal to display        3
+   hout  reg   output reg in hex to display                     4
+   aout  reg   output ASCII character in reg to display         5
+   sout  reg   display string reg points to                     6
+   din   reg   input dec number from keyboard into reg          7
+   hin   reg   input hex number from keyboard into reg          8
+   ain   reg   input character from keyboard into reg           9
+   sin   reg   like sout but for input                          a
+   m           display memory                                   b
+   x           display registers                                c
+   s           display stack                                    d
+   bp          software breakpoint                              e
+   ddout reg   doubleword (i.e., 64 bits) decimal out           f
+   dudout reg  doubleword (i.e., 64 bits) unsigned dec out     10
+   dhout reg   doubleword (i.e., 64 bits) hex out              11
+
+For the output instructions and sin, reg is specified by the
+rs1 field. For the input instructions (except for sin), reg is
+specified by the rd field. For all these instructions, the opcode
+field is zero, and the funct7 field is as indicated in the table
+above.
+
+For hin, the number does not have to be entered with the "0x" prefix.
+
+For ain, the character should be entered without any quotes.
+
+For ddout, dhout, and dudout, the 64-bit number outputted is in
+two adjacent registers in the circular list x5, x6, ..., x31. For
+example, x5-x6, x31-x5, t1-t2, but not t2-t3 (t2 and t3 are not
+adjacent). The rs1 field specifies the first register in a pair.
+The rs1 register holds the low-order word; the adjacent register
+holds the high-order word.
+
+
+Debugger commands
+-----------------
+
+The prompt message the debugger displays is the mnemonic of the
+instruction to executed next. To see the entire instruction,
+enter the i command.
+
+Numbers entered in debugger commands are assumed to be in hex,
+except for the the register number in a "x" register name and the
+debugger command that changes the step count. For example, the
+"12" in "x12" is a decimal number.
+
+The base of a number entered can be explicitly specified by
+prefixing a decimal number with #, and hex number with 0x and a
+binary number with 0b. For example,
+
+   m #3000 10
+
+displays 16 (decimal) words starting at the address 3000
+(decimal).
+
+If the -d command line argument is specified when rv is invoked,
+the rv program pauses when the interpretation of the assembled
+program is about to start. In addition, the trace function is
+turned on, and the step count is set to 1. Thus, each time the
+Enter key is hit, rv executes and traces one instruction.
+
+At any pause, any of the following commands can be entered:
+
+   Hit Enter key
+        Run, pausing each time step count number of instructions
+        is executed and at breakpoints.
+
+   n (where n is a decimal integer)
+
+       Set step count to n, and then execute n instructions.
+       For example, if 5 is entered, then rv executes five
+       instructions and then pauses. Each time the Enter key
+       is subsequently hit, rv executes five instructions and
+       then pauses.
+
+   b <label>  sets a breakpoint at the specified label, replacing
+              the current breakpoint, if any.
+
+   b <address>  sets a breakpoint at the specified address,
+                replacing the current breakpoint, if any.
+
+   b   display current breakpoint.
+
+   b-  cancel the current breakpoint.
+
+   c   change a value in a register or a memory location.
+
+   g   set step count to infinity and run, pausing only at
+       breakpoints and watchpoints, if any.
+
+   h   help screen
+
+   i   displays instruction to be executed next.
+
+   i<label>  displays instruction at label.
+
+   i<address>  displays instruction at address.
+
+   m   memory display.
+
+   q   quit program.
+
+   x   register display.
+
+   s   display stack
+
+   t   turn instruction trace on (trace is off on startup
+       unless -t or -d is specified on the command line). For
+       each instruction executed, the trace displays the
+       instruction executed and its effect. For example, if an
+       instruction changes a0 from 3 to 5, the trace output
+       for that instruction will include
+
+             <a0 = 3/5>
+
+       which shows the before and after values in a0.
+
+   t-  turn instruction trace off.
+
+   w<label>  sets watchpoint at specified label.
+
+   w<address>  sets watchpoint at specified address.
+
+   w   display current watchpoint.
+
+   w-  cancel the current watchpoint.
+
+   z   set step count to infinity and run to the end of the
+       program, ignoring breakpoints and watchpoints
+
+If a label in a debugger command starts with the hex digits a, b,
+c, e, or f (upper or lower case), it will be treated as a hex
+number--not as a label. To prevent this, prefix the label with a
+single double quote. For example, to set a breakpoint at the
+label a0, enter
+
+   b "a0
+
+The m command can take a label or an address. For example,
+
+   m x
+
+displays only the contents of the word at the label x.
+
+   m 3000
+
+displays only the contents of location 3000 (hex).
+
+   m #3000
+
+displays only the contents of 3000 (decimal).
+
+If a second argument is included on an m command, it specifies
+the number of words to be displayed.  For example,
+
+   m x 5
+
+displays five words starting from the label x.
+
+The x command can take a register name or number as an argument.
+For example,
+
+   x x7     (or "x 7" or "x7")
+
+displays only x7. "x" by itself displays all the registers.
+
+The c command changes a value in a register or a memory location.
+The c command requires a register name and a value, or a memory
+label/address and a value:
+
+   c <regname> <value>
+or
+   c <addr> <value>
+
+For example, to write 123 hex to x1, enter at the prompt
+
+   c x1 123
+
+To write 123 to location 1000 hex, enter
+
+   c 1000 123
+
+The b, c, i, m, r, and w commands do not require a space preceding the
+first argument.  For example, the following commands are legal:
+
+   m3000  (or m 3000)
+   mabc   (or m abc where abc is a label in the program)
+   x3     (or x 3)
+   iloop  (or i loop)
+   xx3    (or x x3)
+   b3000  (or b 3000)
+   bloop  (or b loop where loop is a label in the program)
+   cx1 5  (or w x1 5)
+   w100   (or w 100)
+   wabc   (or w abc where abc is a label in the program
+
+
+If -d (debugger on) is specified on the command line, the step
+count is initially 1, and the trace function is on. Thus, each
+time the Enter key is hit, rv executes and traces one
+instruction, and then pauses. You can change the step count at
+any pause. For example, if you want rv to execute 5 instructions
+each time you hit the Enter key, then enter 5 at a pause. Then
+subsequently each time you hit the Enter key, 5 instructions are
+executed. If you enter g at a pause, the step count is set to
+infinity.
+
+A label in the b, c, m, or w commands can be suffixed with + or -
+followed by an integer offset.  For example,
+
+   b loop+4
+
+sets a breakpoint at the location 4 bytes after the location
+corresponding to loop. When using an offset, do not embed
+whitespace in the location expression.  For example,
+
+   m loop +4 8
+
+displays 4 locations starting from loop--not 8 locations
+starting from loop+4. To do the latter, enter
+
+   m loop+4 8
+
+
+Infinite loop detection
+-----------------------
+
+After the execution of any positive multiple of 3000 instructions
+or 180 output instructions, the rv program pauses and displays
+the message "Possible infinite loop", at which point the user can
+enter "q" to quit, "d" to activate the debugger, or hit the Enter
+key to continue execution.
+
+
+Changing PATH (not essential to do this)
+-------------
+
+To avoid having to prefix "rv" with "./" on a Mac OS X, Linux, or
+Raspbian system,
+
+   1) Position your computer on your home directory by
+      entering on the command line
+
+           cd
+
+   2) Insert the following two lines at the beginning of the
+      .bash_profile file in your home directory (or create
+      the file if it does not exist):
+
+      PATH=.:$PATH
+      export PATH
+
+      Exit and restart the terminal program. If the prefix "./"
+      is still required after modifying .bash.profile, then repeat
+      the modification, but for the file
+
+        .bashrc

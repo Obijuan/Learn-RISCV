@@ -1,0 +1,32 @@
+
+# a0 is multiplicand
+# a1 is multiplier
+# t0 is product
+          .text
+shiftadd: li t0, 0          # set product to 0
+loop:     beq a1, x0, done  # test if multiplier is 0
+          andi t1, a1, 1    # test rightmost bit of multiplier
+          beq t1, x0, noadd # branch if multiplier bit is 0
+          add t0, t0, a0    # add multiplicand to product
+noadd:    slli a0, a0, 1    # shift multiplicand left
+          srli a1, a1, 1    # shift multiplier right
+          j loop            # do loop again
+ done:    mv a0, t0         # copy product to a0
+          ret               # return to caller
+#==============================================
+_start:   la t0, prompt     # get address of prompt message
+          sout t0           # prompt the user
+          din a0            # input multiplicand
+          sout t0           # prompt the user
+          din a1            # input multiplier
+          jal ra, shiftadd  # call multipy subroutine
+          la t0, msg        # get address of msg
+          sout t0           # display "Product = "
+          dout a0           # display product
+          nl                # move cursor to start of next line
+          halt
+#==============================================================
+          .data
+prompt:   .asciz "Enter decimal integer: "
+msg:      .asciz "Product = "
+

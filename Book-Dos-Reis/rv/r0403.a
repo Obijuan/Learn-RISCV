@@ -1,0 +1,4 @@
+          lw t0, y      # loads the address of x
+          halt
+x:        .word 10      # translated to 0000000a hex
+y:        .word x       # translated to 00000008 hex (address of x)

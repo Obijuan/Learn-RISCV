@@ -1,0 +1,23 @@
+          lw t0, aprompt     # get address of prompt
+          sout t0            # prompt user
+          lw t0, abuffer     # get address of buffer
+          sin t0             # read in string
+          addi t2, x0, 0     # set count to 0
+loop:     lb t1, t0, 0       # get char from string
+          beq t1, x0, done   # branch if null char
+          addi t1, t1, -'A'  # subtract letter A
+          sltiu t1, t1, 1    # test if result is 0
+          add t2, t2, t1     # add 1 or 0 to count
+          addi t0, t0, 1     # move str pointer to next char
+          jal x0, loop       # unconditional jump
+done:     lw t0, amsg        # get address of msg
+          sout t0            # display msg
+          dout t2            # display count
+          halt
+aprompt:  .word prompt
+prompt:   .asciz "Enter string\n"
+amsg:     .word msg
+msg:      .asciz "Count = "
+abuffer:  .word buffer
+buffer:   .zero 100 
+

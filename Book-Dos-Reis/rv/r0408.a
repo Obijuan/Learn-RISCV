@@ -1,0 +1,16 @@
+          .text
+          lw t0, a       # negative offset
+          lw t1, b       # positive offset
+          lw t2, c       # negative offset
+          add t0, t0, t1 # add b to a
+          add t0, t0, t2 # add c to a
+          dout t0        # displays 15
+          sw t0, sum     # 0 offset
+          x              # debugger inst that displays regs
+          halt
+c:        .word 3
+#======================================================
+          .data
+a:        .word 1
+sum:      .word 0       # <--- gp points here
+b:        .word 2

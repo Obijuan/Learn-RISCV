@@ -1,0 +1,36 @@
+                             # #include <stdio.h>
+                             # struct Point                
+                             # {
+                             #    int x;
+                             #    int y;
+                             # };
+                                                          
+a1:       .zero 20           # int a1[5];
+p1:       .zero 8            # struct Point p1;
+#=======================================================
+main:     .global main       # int main()
+                             # {
+          add sp, sp, -28    #    int a2[5];               
+                             #    struct Point p2;
+                             
+                             #    static int a3[5];        
+                             #    static struct Point p3;
+                             
+          li t0, 1           #    a1[1] = 1;
+          sw t0, a1+4
+          sw t0, p1+4        #    p1.y = 1;
+
+          sw t0, 12(sp)      #    a2[1] = 1;
+          sw t0, 4(sp)       #    p2.y = 1;
+                             
+          sw t0, @1a3+4      #    a3[1] = 1;
+          sw t0, @2p3+4      #    p3.y = 1;
+          
+          s                  #    debugger inst to display stack  
+                             
+          li a0, 0           #    return 0;
+          jalr x0, 0(ra)
+                             # }
+@1a3:     .zero 20
+@2p3:     .zero 8
+

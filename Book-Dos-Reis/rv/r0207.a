@@ -1,0 +1,4 @@
+          jal ra, sub
+          halt
+sub:      hout gp
+          jalr x0, ra

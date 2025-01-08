@@ -1,0 +1,16 @@
+         lw t0, ax       # load t0 with addr of x
+         lw t1, 0(t0)    # load what t0 is pointing to
+         dout t1         # display 5 (value from x)
+         nl              # move cursor to the next line
+         addi t1, t1, 1  # add 1 to value from x
+         sw t1, 0(t0)    # store new value into x
+         lw t1, 4(t0)    # load word after x (y)
+         dout t1         # displays 7 (value from y)
+         nl              # move cursor to the next line
+         lw t1, -4(t0)   # load word preceding x
+         dout t1         # displays 11
+         halt
+        .word 11
+x:      .word 5
+y:      .word 7       
+ax:     .word x          # address of x 

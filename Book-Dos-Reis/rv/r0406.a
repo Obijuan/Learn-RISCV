@@ -1,0 +1,6 @@
+# deterimining relative address
+          addi t0, x0, 5
+          jal ra, sub
+          halt
+sub:      dout t0
+          jalr x0, 0(ra)

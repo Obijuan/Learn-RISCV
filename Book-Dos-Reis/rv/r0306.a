@@ -1,0 +1,24 @@
+               lw t0, aprompt1    # load t0 with address of prompt message
+               sout t0            # display prompt message
+               ain t0             # read a character into t0
+               andi t0, t0, 0xdf  # change to uppercase
+               aout t0            # display modified character
+               nl                 # move cursor to the next line
+               lw t0, aprompt2    # load t0 with address of prompt message
+               sout t0            # display prompt message
+               ain t0             # read a character into t0
+               ori t0, t0, 0x20   # change to lowercase
+               aout t0            # display modified character
+               nl                 # move cursor to the next line
+               lw t0, aprompt3    # load t0 with the prompt message
+               sout t0            # display prompt message
+               ain t0             # read a character into t0
+               xori t0, t0, 0x20  # change case
+               aout t0            # display modified character
+               halt
+     prompt1:  .asciz "Enter lowercase letter\n"
+     aprompt1: .word prompt1
+     prompt2:  .asciz "Enter uppercase letter\n"
+     aprompt2: .word prompt2
+     prompt3:  .asciz "Enter a letter in either case\n"
+     aprompt3: .word prompt3

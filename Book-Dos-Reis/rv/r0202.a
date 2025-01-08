@@ -1,0 +1,4 @@
+          addi t0, x0, 2
+          addi t0, t0, 3
+          dout t0
+          halt

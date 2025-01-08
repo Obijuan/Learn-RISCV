@@ -1,0 +1,5 @@
+# assembling example
+          lw t0, x
+          dout t0
+          halt
+x:       .word 5

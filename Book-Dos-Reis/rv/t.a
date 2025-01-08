@@ -1,0 +1,21 @@
+                           # #include <stdio.h>
+          .global main     # int main(int argc, char *argv[])
+main:                      # {     
+                           #    while (1)
+                           #    {
+@L0:      addi a0, a0, -1  #       argc--;             
+
+          blt a0, x0, @L1  #       if (argc < 0) break;
+                                             
+          mv t0, a0        #       printf("%s\n", argv[argc]);
+          slli t0, t0, 2
+          add t0, t0, a1
+          lw t0, 0(t0)
+          sout t0
+          nl
+                           
+          j @L0            #    }
+
+@L1:      li a0, 0         #    return 0;   
+          ret
+                           # } 

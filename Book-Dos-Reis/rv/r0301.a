@@ -1,0 +1,7 @@
+          lw t0, x        # load 2 into t0
+          lw t1, y        # load 3 into t1
+          add t0, t0, t1  # add t0 and t1
+          dout t0         # display sum in t0
+          halt
+x:        .word 2         # data (2)
+y:        .word 3         # data(3)

@@ -1,0 +1,8 @@
+          .extern sub
+          .global i
+          .global j
+
+_start:   jal sub
+          halt
+i:        .word 5
+j:        .word 7
